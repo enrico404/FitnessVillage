@@ -1,0 +1,36 @@
+body {
+    margin-top: 3%;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+#mainTitle {
+    text-align: center;
+}
+
+.separator {
+    margin-left: 5px;
+    width: 80%;
+    border: 0.2px solid gray;
+}
+
+.login {
+    text-align: end;
+    font-size: 11pt;
+}
+
+.mainGrid {
+    color: white;
+    text-align: center;
+    margin-top: 40%;
+    font-weight: bold;
+    font-size: 24pt;
+}
+
+
+.card {
+    margin-top: 3%;
+    float: left;
+    margin-right: 2%;
+}
+

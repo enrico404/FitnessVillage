@@ -1,0 +1,30 @@
+{% extends "index.html" %}
+{% block head %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'main_page/style.css' %}" />
+<title>Fitness Village</title>
+{% endblock %}
+{% block body %}
+<p class="login">Effettua il <a href="">login</a></p>
+<h1 id="mainTitle">Fitness Village</h1>
+<h2>Prenota subito un corso!</h2>
+<br>
+<h3>Scegli il corso:</h3>
+<div class="separator"></div>
+
+<div class="container-fluid">
+        <div class="card" style="width: 10rem;">
+            <img src="{% static 'main_page/images/yoga.jpg' %}" class="card-img" alt="yoga">
+            <div class="card-img-overlay">
+                <p class="card-text mainGrid">YOGA</p>
+            </div>
+        </div>
+        <div class="card" style="width: 10rem;">
+                <img src="{% static 'main_page/images/yoga.jpg' %}" class="card-img" alt="yoga">
+                <div class="card-img-overlay">
+                    <p class="card-text mainGrid">YOGA</p>
+                </div>
+            </div>
+</div>
+
+{% endblock %}

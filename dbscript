@@ -1,0 +1,3 @@
+CREATE DATABASE dbFitnessVillage;
+CREATE USER 'userFitnessVillage'@'localhost' IDENTIFIED BY 'fitvillage';
+GRANT ALL PRIVILEGES ON dbFitnessVillage.* TO 'userFitnessVillage'@'localhost' WITH GRANT OPTION;
