@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block head %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'courseManager/courseManagerStyle.css' %}" />
+{% endblock %}
+{% block body %}
+<head>
+    <h2 class="title">Corso di {{ nomeCorso }}</h2>
+
+    <section>
+        <p>Torna alla <a href="{% url 'main_page:welcome' %}">Home</a></p>
+    </section>
+</head>
+{% for course in course_set %}
+<p>{{ course.nome }}</p>
+{% endfor %}
+{% endblock %}

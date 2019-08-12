@@ -2,10 +2,15 @@
 {% block head %}
 {% load staticfiles %}
 <link rel="stylesheet" type="text/css" href="{% static 'main_page/style.css' %}" />
+<script src="{% static 'main_page/jsMain.js' %}"></script>
 <title>Fitness Village</title>
 {% endblock %}
 {% block body %}
-<p class="login">Effettua il <a href="">login</a></p>
+{% if user.is_authenticated %}
+<p class="login">Benvenuto <b>{{ user.username }}</b>. Effettua il <a href="{% url 'main_page:logout_view' %}">logout</a></p>
+{% else %}
+<p class="login">Effettua il <a href="{% url 'main_page:login' %}">login</a></p>
+{% endif %}
 <h1 id="mainTitle">Fitness Village</h1>
 <h2>Prenota subito un corso!</h2>
 <br>
@@ -13,18 +18,43 @@
 <div class="separator"></div>
 
 <div class="container-fluid">
-        <div class="card" style="width: 10rem;">
+        <div class="card cardSport" onclick="courseClick('yoga')">
             <img src="{% static 'main_page/images/yoga.jpg' %}" class="card-img" alt="yoga">
             <div class="card-img-overlay">
                 <p class="card-text mainGrid">YOGA</p>
             </div>
         </div>
-        <div class="card" style="width: 10rem;">
-                <img src="{% static 'main_page/images/yoga.jpg' %}" class="card-img" alt="yoga">
+        <div class="card cardSport" onclick="courseClick('box')">
+                <img src="{% static 'main_page/images/box.jpg' %}" class="card-img" alt="yoga">
                 <div class="card-img-overlay">
-                    <p class="card-text mainGrid">YOGA</p>
+                    <p class="card-text mainGrid">BOX</p>
                 </div>
-            </div>
+        </div>
+        <div class="card cardSport" onclick="courseClick('mma')">
+                <img src="{% static 'main_page/images/mma.png' %}" class="card-img" alt="yoga">
+                <div class="card-img-overlay">
+                    <p class="card-text mainGrid">MMA</p>
+                </div>
+        </div>
+        <div class="card cardSport" onclick="courseClick('aerobica')">
+                <img src="{% static 'main_page/images/aerobica.jpg' %}" class="card-img" alt="yoga">
+                <div class="card-img-overlay">
+                    <p class="card-text mainGrid">AEROBICA</p>
+                </div>
+        </div>
+        <div class="card cardSport" onclick="courseClick('crossfit')">
+                <img src="{% static 'main_page/images/crossfit.jpg' %}" class="card-img" alt="yoga">
+                <div class="card-img-overlay">
+                    <p class="card-text mainGrid">CROSSFIT</p>
+                </div>
+        </div>
+        <div class="card cardSport" onclick="courseClick('pilates')">
+                <img src="{% static 'main_page/images/pilates.png' %}" class="card-img" alt="yoga">
+                <div class="card-img-overlay">
+                    <p class="card-text mainGrid">PILATES</p>
+                </div>
+        </div>
+
 </div>
 
 {% endblock %}

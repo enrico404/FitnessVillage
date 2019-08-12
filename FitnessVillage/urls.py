@@ -21,5 +21,6 @@ urlpatterns = [
     path('', include('django.contrib.auth.urls')),
     path('', views.main_page),
     path('main_page/', include('main_page.urls', namespace='main_page')),
+    path('courseManager/', include('courseManager.urls', namespace='courseManager'))
 
 ]
