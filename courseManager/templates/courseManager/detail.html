@@ -12,6 +12,13 @@
     </section>
 </head>
 {% for course in course_set %}
-<p>{{ course.nome }}</p>
+<div class="container-fluid cardCorso">
+    <p>Corso: {{ course.nome }}</p>
+    <p>Data: {{ course.data }}</p>
+    <p>Durata: {{ course.durata }} ora </p>
+    <p>Capienza: {{ course.cap }}</p>
+    <a class="btn btn-primary" style="color:white;">Prenota</a>
+</div>
+
 {% endfor %}
 {% endblock %}

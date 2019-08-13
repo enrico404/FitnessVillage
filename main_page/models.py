@@ -9,10 +9,10 @@ class Sala(models.Model):
 class Corso(models.Model):
     nome = models.CharField(max_length=200)
     data = models.DateTimeField()
-    operatore  = models.ForeignKey(User, on_delete=models.CASCADE)
+    operatore = models.ForeignKey(User, on_delete=models.CASCADE)
     cap = models.IntegerField()
     sala_id = models.ForeignKey(Sala, on_delete=models.CASCADE)
-
+    durata = models.FloatField()
 
 
 class Prenota(models.Model):
