@@ -16,8 +16,8 @@
     <p>Corso: {{ course.nome }}</p>
     <p>Data: {{ course.data }}</p>
     <p>Durata: {{ course.durata }} ora </p>
-    <p>Capienza: {{ course.cap }}</p>
-    <a class="btn btn-primary" style="color:white;">Prenota</a>
+    <p>Posti disponibili: {{ course.cap|sub:course.posti_prenotati }}</p>
+    <a class="btn btn-primary" style="color:white; cursor: pointer;">Prenota</a>
 </div>
 
 {% endfor %}

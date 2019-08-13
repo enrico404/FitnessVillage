@@ -13,6 +13,7 @@ class Corso(models.Model):
     cap = models.IntegerField()
     sala_id = models.ForeignKey(Sala, on_delete=models.CASCADE)
     durata = models.FloatField()
+    posti_prenotati = models.IntegerField()
 
 
 class Prenota(models.Model):

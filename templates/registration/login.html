@@ -4,7 +4,7 @@
     <h4 style="margin-top: 100px; margin-left:100px;">Effettua l'accesso!!</h4>
 
     {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
+    <p style="margin-left: 100px; margin-top: 50px;">Your username and password didn't match. Please try again.</p>
     {% endif %}
     <form method="post" style="margin-left: 10%; margin-top: 5%; border: 1px solid black; padding: 20px; width: 300px;">
         {% csrf_token %}
