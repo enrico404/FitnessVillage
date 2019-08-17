@@ -18,5 +18,5 @@ class Corso(models.Model):
 
 class Prenota(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    corso_id = models.ForeignKey(Corso, on_delete=models.CASCADE)
+    corso = models.ForeignKey(Corso, on_delete=models.CASCADE)
 

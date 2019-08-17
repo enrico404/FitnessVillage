@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
 {% load staticfiles %}
+{% load app_filters %}
 <link rel="stylesheet" type="text/css" href="{% static 'courseManager/courseManagerStyle.css' %}" />
 {% endblock %}
 {% block body %}
@@ -11,14 +12,27 @@
         <p>Torna alla <a href="{% url 'main_page:welcome' %}">Home</a></p>
     </section>
 </head>
+
+    {% for message in messages %}
+    <p><h4 style="color:red;">{{ message }}</h4></p>
+    {% endfor %}
+
 {% for course in course_set %}
 <div class="container-fluid cardCorso">
     <p>Corso: {{ course.nome }}</p>
     <p>Data: {{ course.data }}</p>
     <p>Durata: {{ course.durata }} ora </p>
-    <p>Posti disponibili: {{ course.cap|sub:course.posti_prenotati }}</p>
-    <a class="btn btn-primary" style="color:white; cursor: pointer;">Prenota</a>
+    <p>Posti disponibili: {{ posti_disponibili|get_at_index:forloop.counter0 }} </p>
+    {% if posti_disponibili|get_at_index:forloop.counter0 > 0 %}
+        <a class="btn btn-primary" style="color:white; cursor: pointer;" href="{% url 'courseManager:prenotazione' course.id %}">Prenota</a>
+    {% else %}
+        <a class="btn btn-primary" style="color:white; cursor: pointer;" href="">Mettiti in lista di attesa</a>
+    {% endif %}
 </div>
-
 {% endfor %}
+
+{% if user|has_group:'Operators' or user.username == 'admin' %}
+    <a class="btn btn-primary" style="color:white; cursor: pointer;" href="{% url 'courseManager:insert' nomeCorso %}">Inserisci corso</a>
+{% endif %}
+
 {% endblock %}

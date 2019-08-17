@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block body %}
+    <head>
+        <h2 style="margin-left: 45%;">Corso di {{ nomeCorso }}</h2>
+
+        <section>
+            <p style="margin-left: 47%;">Torna alla <a href="{% url 'main_page:welcome' %}">Home</a></p>
+        </section>
+    </head>
+    <form method="post" style="margin-left: 50px; margin-top: 5%; border: 1px solid black; padding: 20px; width: 800px;">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+            <p>Operatore: </p> <input type="text" name="operatore" value="{{ user.username }}" style="pointer-events: none; background-color: green; color:white; border:none;">
+
+            <br><br>
+            <input type="submit" value="submit">
+    </form>
+{% endblock %}
