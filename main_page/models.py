@@ -28,3 +28,11 @@ class Prenota(models.Model):
     corso = models.ForeignKey(Corso, on_delete=models.CASCADE)
     cancellato = models.BooleanField(default=False)
 
+
+class Messaggio(models.Model):
+    userMittente = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userMittente')
+    userDestinatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userDestinatario')
+    data_ora = models.DateTimeField()
+    text = models.CharField(max_length=500)
+    letto = models.BooleanField(default=False)
+

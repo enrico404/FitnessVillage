@@ -14,9 +14,7 @@ def courseDetail(request, nomeCorso):
     course_set = []
     for course in course_set_tmp:
         if course.data == datetime.date.today():
-            print("time:", datetime.datetime.now().time())
             if course.ora_fine < datetime.datetime.now().time():
-                print("minore")
                 continue
         course_set.append(course)
 
@@ -24,7 +22,13 @@ def courseDetail(request, nomeCorso):
     for course in course_set:
         nposti = course.cap - course.posti_prenotati
         posti_disponibili.append(nposti)
-    return render(request, 'courseManager/detail.html', {'nomeCorso': nomeCorso, 'course_set': course_set, 'posti_disponibili': posti_disponibili })
+
+    prenotazioni_tmp = Prenota.objects.filter(user=request.user)
+    prenotazioni = []
+    for pren in prenotazioni_tmp:
+        prenotazioni.append(pren.corso.id)
+
+    return render(request, 'courseManager/detail.html', {'nomeCorso': nomeCorso, 'course_set': course_set, 'posti_disponibili': posti_disponibili, 'prenotazioni':prenotazioni})
 
 @login_required
 def prenotazione(request, corsoID):
@@ -71,9 +75,12 @@ def insert(request, nomeCorso):
                 if not (corso.ora_fine <= ora_inizio or corso.ora_inizio >= ora_fine):
                     messages.add_message(request, messages.ERROR, 'La sala è già occupata da un altro corso!')
                     return HttpResponseRedirect('/courseManager/' + nomeCorso)
-            newCourse.save()
-            messages.add_message(request, messages.SUCCESS, 'Corso inserito con successo!')
-            return HttpResponseRedirect('/courseManager/' + nomeCorso)
+            if sala.cap_max >= newCourse.cap:
+                newCourse.save()
+                messages.add_message(request, messages.SUCCESS, 'Corso inserito con successo!')
+                return HttpResponseRedirect('/courseManager/' + nomeCorso)
+            else:
+                messages.add_message(request, messages.ERROR, "La capienza del corso supera la capienza massima della sala!")
         messages.add_message(request, messages.ERROR, "Errore nell'inserimento del corso!")
         return HttpResponseRedirect('/courseManager/' + nomeCorso)
     else:
@@ -82,11 +89,11 @@ def insert(request, nomeCorso):
 
 
 @login_required
-def cancella(request, corsoID):
+def cancella(request, corsoID, nomeCorso):
     ''' il corso in realtà non si cancella dal database, viene cambiato solo il flag di cancellazione '''
     corso = Corso.objects.get(pk=corsoID)
     corso.cancellato = True
     # cambio data così non dà fastidio all'inserimento
     corso.data = datetime.date(3000, 12, 12)
     corso.save()
-    return HttpResponseRedirect('/')
+    return HttpResponseRedirect('/courseManager/' + nomeCorso)
