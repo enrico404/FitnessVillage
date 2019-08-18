@@ -2,17 +2,13 @@ body {
     margin-top: 3%;
     margin-left: 3%;
     margin-right: 3%;
+
 }
 
 #mainTitle {
     text-align: center;
 }
 
-.separator {
-    margin-left: 5px;
-    width: 85%;
-    border: 0.2px solid gray;
-}
 
 .login {
     text-align: end;

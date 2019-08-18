@@ -18,17 +18,24 @@
     {% endfor %}
 
 {% for course in course_set %}
-<div class="container-fluid cardCorso">
-    <p>Corso: {{ course.nome }}</p>
-    <p>Data: {{ course.data }}</p>
-    <p>Durata: {{ course.durata }} ora </p>
-    <p>Posti disponibili: {{ posti_disponibili|get_at_index:forloop.counter0 }} </p>
-    {% if posti_disponibili|get_at_index:forloop.counter0 > 0 %}
-        <a class="btn btn-primary" style="color:white; cursor: pointer;" href="{% url 'courseManager:prenotazione' course.id %}">Prenota</a>
-    {% else %}
-        <a class="btn btn-primary" style="color:white; cursor: pointer;" href="">Mettiti in lista di attesa</a>
+    {% if not course.cancellato %}
+        <div class="container-fluid cardCorso">
+            <p>Corso: {{ course.nome }}</p>
+            <p>Data: {{ course.data }}</p>
+            <p>Ora inizio: {{ course.ora_inizio }}</p>
+            <p>Ora fine: {{ course.ora_fine }}</p>
+            <p>Posti disponibili: {{ posti_disponibili|get_at_index:forloop.counter0 }} </p>
+            <p>Sala: {{ course.sala.id }}</p>
+            {% if posti_disponibili|get_at_index:forloop.counter0 > 0 %}
+                <a class="btn btn-primary" style="color:white; cursor: pointer;" href="{% url 'courseManager:prenotazione' course.id %}">Prenota</a>
+            {% else %}
+                <a class="btn btn-primary" style="color:white; cursor: pointer;" href="">Mettiti in lista di attesa</a>
+            {% endif %}
+            {% if user|has_group:'Operators' or user.username == 'admin' %}
+                <a class="btn btn-danger" style="color:white; cursor: pointer;" href="{% url 'courseManager:cancella' course.id %}">Cancella</a>
+            {% endif %}
+        </div>
     {% endif %}
-</div>
 {% endfor %}
 
 {% if user|has_group:'Operators' or user.username == 'admin' %}

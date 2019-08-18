@@ -5,10 +5,21 @@ from main_page.models import Corso, Prenota
 from django.shortcuts import HttpResponseRedirect
 from django.contrib import messages
 from .forms import CourseInsertForm
+from django.db.models import Q
+import datetime
 
 @login_required
 def courseDetail(request, nomeCorso):
-    course_set = Corso.objects.filter(data__gte=timezone.now(), nome__exact=nomeCorso).order_by('data')
+    course_set_tmp = Corso.objects.filter(data__gte=timezone.now(), nome__exact=nomeCorso).order_by('data', 'ora_inizio')
+    course_set = []
+    for course in course_set_tmp:
+        if course.data == datetime.date.today():
+            print("time:", datetime.datetime.now().time())
+            if course.ora_fine < datetime.datetime.now().time():
+                print("minore")
+                continue
+        course_set.append(course)
+
     posti_disponibili = []
     for course in course_set:
         nposti = course.cap - course.posti_prenotati
@@ -44,14 +55,38 @@ def insert(request, nomeCorso):
     form = CourseInsertForm(request.POST)
     if request.method == 'POST':
         if form.is_valid():
-            nome = form.cleaned_data['nome']
+            nome = nomeCorso
             data = form.cleaned_data['data']
             capienza = form.cleaned_data['capienza']
             posti_prenotati = form.cleaned_data['posti_prenotati']
-            operatore = form.cleaned_data['operatore']
-            newCourse = Corso(nome=nome, data=data, cap=capienza, )
-
-            return HttpResponseRedirect('/courseManager/'+nomeCorso)
+            operatore = request.user
+            sala = form.cleaned_data['sala']
+            ora_inizio = form.cleaned_data['ora_inizio']
+            ora_fine = form.cleaned_data['ora_fine']
+            newCourse = Corso(nome=nome, data=data, operatore=operatore, cap=capienza, sala=sala, ora_inizio=ora_inizio, ora_fine=ora_fine, posti_prenotati=posti_prenotati)
+            #se il corso non esiste già
+            corsi_del_giorno = Corso.objects.filter(Q(nome=nome), Q(data__year=data.year), Q(data__month=data.month), Q(data__day=data.day), Q(sala=sala))
+            #chechk che la sala non sia occupata in quell'ora, se è occupata esco
+            for corso in corsi_del_giorno:
+                if not (corso.ora_fine <= ora_inizio or corso.ora_inizio >= ora_fine):
+                    messages.add_message(request, messages.ERROR, 'La sala è già occupata da un altro corso!')
+                    return HttpResponseRedirect('/courseManager/' + nomeCorso)
+            newCourse.save()
+            messages.add_message(request, messages.SUCCESS, 'Corso inserito con successo!')
+            return HttpResponseRedirect('/courseManager/' + nomeCorso)
+        messages.add_message(request, messages.ERROR, "Errore nell'inserimento del corso!")
+        return HttpResponseRedirect('/courseManager/' + nomeCorso)
     else:
         form = CourseInsertForm()
         return render(request, 'courseManager/insertCourse.html', {'nomeCorso': nomeCorso, 'form':form})
+
+
+@login_required
+def cancella(request, corsoID):
+    ''' il corso in realtà non si cancella dal database, viene cambiato solo il flag di cancellazione '''
+    corso = Corso.objects.get(pk=corsoID)
+    corso.cancellato = True
+    # cambio data così non dà fastidio all'inserimento
+    corso.data = datetime.date(3000, 12, 12)
+    corso.save()
+    return HttpResponseRedirect('/')

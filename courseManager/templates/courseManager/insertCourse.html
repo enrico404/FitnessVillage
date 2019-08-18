@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+{% block head %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'courseManager/courseManagerStyle.css' %}" />
+{% endblock %}
+
 {% block body %}
     <head>
         <h2 style="margin-left: 45%;">Corso di {{ nomeCorso }}</h2>
@@ -9,9 +14,10 @@
     </head>
     <form method="post" style="margin-left: 50px; margin-top: 5%; border: 1px solid black; padding: 20px; width: 800px;">
             {% csrf_token %}
-
+            <p>Nome: </p><input type="text" name="nome" value="{{ nomeCorso }}" class="fixedFields">
+            <br><br>
             {{ form.as_p }}
-            <p>Operatore: </p> <input type="text" name="operatore" value="{{ user.username }}" style="pointer-events: none; background-color: green; color:white; border:none;">
+            <p>Operatore: </p> <input type="text" name="operatore" value="{{ user.username }}" class="fixedFields">
 
             <br><br>
             <input type="submit" value="submit">

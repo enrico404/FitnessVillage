@@ -2,3 +2,27 @@
     text-align: center;
     font-style: bold;
 }
+
+
+body {
+    margin-top: 3%;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+.cardCorso {
+    margin-top: 30px;
+    border: 1px solid gray;
+    padding: 10px;
+    box-shadow: 5px 10px 8px #888888;
+    width: 60%;
+
+}
+
+.fixedFields {
+    pointer-events: none;
+    background-color: green;
+    color:white;
+    border:none;
+    border-radius: 3px;
+}

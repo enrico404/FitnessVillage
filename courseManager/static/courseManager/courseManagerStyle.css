@@ -18,3 +18,12 @@ body {
     width: 60%;
 
 }
+
+.fixedFields {
+    pointer-events: none;
+    background-color: green;
+    color:white;
+    border:none;
+    border-radius: 3px;
+    padding: 3px;
+}
