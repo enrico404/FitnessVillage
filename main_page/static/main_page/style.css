@@ -7,13 +7,11 @@ body {
 
 #mainTitle {
     text-align: center;
+    margin-top: 20px;
+    margin-bottom: 50px;
 }
 
 
-.login {
-    text-align: end;
-    font-size: 11pt;
-}
 
 .mainGrid {
     color: white;
@@ -54,3 +52,53 @@ body {
     cursor: pointer;
     transition: ease-in 0.13s;
 }
+
+.assistenza{
+    float:left;
+}
+
+.login {
+    margin-left: 85%;
+    width: 300px;
+
+
+}
+
+.fixedFields {
+    pointer-events: none;
+    background-color: green;
+    color:white;
+    border:none;
+    border-radius: 3px;
+    padding: 3px;
+}
+
+.containerMessages {
+    border: 1px solid gray;
+    height:1000px;
+    margin-top: 50px;
+}
+
+.messaggio {
+    border:none;
+    border-bottom: 1px solid gray;
+    border-top: 1px solid gray;
+    border-radius: 0px;
+    width: 100%;
+
+
+}
+
+.card {
+    margin-bottom: -50px;
+}
+
+.card:hover{
+    background-color: gray;
+    transition: 0.2s ease-in;
+    cursor: pointer;
+    subtitle.color: white;
+    color:white;
+}
+
+

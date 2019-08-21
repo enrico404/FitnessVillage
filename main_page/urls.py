@@ -9,5 +9,8 @@ urlpatterns = [
     path('corso/<nomeCorso>', views.corso, name='corso'),
     path('logout_view/', views.logout_view, name='logout_view'),
     path('login/', views.login, name='login'),
+    path('assistenza/', views.assistenza, name='assistenza'),
+    path('messaggi/', views.messaggi, name='messaggi'),
+    path('rispondi/<messageID>', views.rispondi, name='rispondi'),
 
 ]

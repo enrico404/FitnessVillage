@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block head %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'main_page/style.css' %}" />
+{% endblock %}
+{% block body %}
+<head>
+     <section>
+            <div style="float:left;"><p>Torna alla <a href="{% url 'main_page:welcome' %}">Home</a></p></div>
+            <div class="login"><p style="font-size: 11pt;">Benvenuto <b>{{ user.username }}</b>. Effettua il <a href="{% url 'main_page:logout_view' %}">logout</a></p></div>
+     </section>
+    <section>
+        <h2 style="margin-left:43%">Centro messaggi</h2>
+    </section>
+
+</head>
+<div class="container-fluid containerMessages">
+    {% for msg in messaggi %}
+    <a style="color:black;" href="{% url 'main_page:rispondi' msg.pk %}">
+        <div class="card messaggio">
+          <div class="card-body">
+            <h5 class="card-title">From: {{ msg.userMittente }}</h5>
+            <h6 class="card-subtitle mb-2">To: {{ msg.userDestinatario }}, {{ msg.data_ora }}</h6>
+            <p class="card-text">{{ msg.text }}</p>
+          </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -6,11 +6,10 @@
 
 {% block body %}
     <head>
-        <h2 style="margin-left: 45%;">Corso di {{ nomeCorso }}</h2>
-
         <section>
-            <p style="margin-left: 47%;">Torna alla <a href="{% url 'main_page:welcome' %}">Home</a></p>
+            <p style="margin-left: 50px;">Torna alla <a href="{% url 'main_page:welcome' %}">Home</a></p>
         </section>
+        <h2 style="margin-left: 45%;">Corso di {{ nomeCorso }}</h2>
     </head>
     <form method="post" style="margin-left: 50px; margin-top: 5%; border: 1px solid black; padding: 20px; width: 800px;">
             {% csrf_token %}

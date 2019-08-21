@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block head %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'main_page/style.css' %}" />
+{% endblock %}
+{% block body %}
+    <form method="post" style="margin-left: 50px; margin-top: 5%; border: 1px solid black; padding: 20px; width: 800px;">
+        {% csrf_token %}
+        <span>Mittente: </span><input type="text" name="mittente" value="{{ mittente }}" class="fixedFields"><br><br>
+        <span>Destinatario: </span><input type="text" name="destinatario" value="{{ destinatario }}" class="fixedFields"><br><br>
+        {{ form.as_p}}
+        <br><br>
+        <input type="submit" value="submit">
+    </form>
+{% endblock %}

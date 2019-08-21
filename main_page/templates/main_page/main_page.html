@@ -1,17 +1,27 @@
-{% extends "index.html" %}
+{% extends "base.html" %}
 {% block head %}
 {% load staticfiles %}
+{% load app_filters %}
 <link rel="stylesheet" type="text/css" href="{% static 'main_page/style.css' %}" />
 <script src="{% static 'main_page/jsMain.js' %}"></script>
-<title>Fitness Village</title>
 {% endblock %}
 {% block body %}
 {% if user.is_authenticated %}
-<p class="login">Benvenuto <b>{{ user.username }}</b>. Effettua il <a href="{% url 'main_page:logout_view' %}">logout</a></p>
+    {% if user|has_group:'Common' or user.username == 'admin' %}
+        <div class="assistenza"><img style="width: 40px; height:40px; margin-right:10px; " src="{% static 'main_page/images/assistenza.png' %}">Chiedi <a href="{% url 'main_page:assistenza' %}" style="text-decoration: underline;">assistenza</a></div>
+        <br><br>
+    {% endif %}
+    <div style="width: 200px;float:left;"><img style="width: 40px; height:40px; margin-right:10px; " src="{% static 'main_page/images/messaggi.jpg' %}"><a href="{% url 'main_page:messaggi' %}" style="text-decoration: underline;">Centro Messaggi</a></div>
+    <div class="login"><p style="font-size: 11pt;">Benvenuto <b>{{ user.username }}</b>. Effettua il <a href="{% url 'main_page:logout_view' %}">logout</a></p></div>
 {% else %}
 <p class="login">Effettua il <a href="{% url 'main_page:login' %}">login</a></p>
 {% endif %}
 <h1 id="mainTitle">Fitness Village</h1>
+
+{% for message in messages %}
+    <p><h4 style="color:red;">{{ message }}</h4></p>
+{% endfor %}
+
 <h2>Prenota subito un corso!</h2>
 <br>
 <h3>Scegli il corso:</h3>
