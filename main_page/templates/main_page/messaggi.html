@@ -17,13 +17,23 @@
 <div class="container-fluid containerMessages">
     {% for msg in messaggi %}
     <a style="color:black;" href="{% url 'main_page:rispondi' msg.pk %}">
-        <div class="card messaggio">
-          <div class="card-body">
-            <h5 class="card-title">From: {{ msg.userMittente }}</h5>
-            <h6 class="card-subtitle mb-2">To: {{ msg.userDestinatario }}, {{ msg.data_ora }}</h6>
-            <p class="card-text">{{ msg.text }}</p>
-          </div>
-        </div>
+        {% if msg.letto %}
+            <div class="card messaggio" style="color:gray;">
+              <div class="card-body">
+                <h5 class="card-title">From: {{ msg.userMittente }}</h5>
+                <h6 class="card-subtitle mb-2">To: {{ msg.userDestinatario }}, {{ msg.data_ora }}</h6>
+                <p class="card-text">{{ msg.text }}</p>
+              </div>
+            </div>
+        {% else %}
+            <div class="card messaggio">
+              <div class="card-body">
+                <h5 class="card-title">From: {{ msg.userMittente }}</h5>
+                <h6 class="card-subtitle mb-2">To: {{ msg.userDestinatario }}, {{ msg.data_ora }}</h6>
+                <p class="card-text">{{ msg.text }}</p>
+              </div>
+            </div>
+        {% endif %}
     </a>
     {% endfor %}
 </div>

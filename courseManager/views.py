@@ -28,16 +28,20 @@ def courseDetail(request, nomeCorso):
     for pren in prenotazioni_tmp:
         prenotazioni.append(pren.corso.id)
 
-    return render(request, 'courseManager/detail.html', {'nomeCorso': nomeCorso, 'course_set': course_set, 'posti_disponibili': posti_disponibili, 'prenotazioni':prenotazioni})
+    #lista di valori booleani che indica se una prenotazione è stata cancellata oppure no
+    prenotazioniCancellate = []
+    for pren in prenotazioni_tmp:
+        prenotazioniCancellate.append(pren)
+    return render(request, 'courseManager/detail.html', {'nomeCorso': nomeCorso, 'course_set': course_set, 'posti_disponibili': posti_disponibili, 'prenotazioni':prenotazioni, 'prenotazioniCancellate':prenotazioniCancellate})
 
 @login_required
 def prenotazione(request, corsoID):
     corso = Corso.objects.get(pk=corsoID)
     user = request.user
     CourseName = corso.nome
-    prenotazione = Prenota(user=user, corso=corso)
+    prenotazione = Prenota(user=user, corso=corso, cancellato=False)
     #flag per cedere se esiste la prenotazione
-    pren = Prenota.objects.filter(user=user, corso=corso).exists()
+    pren = Prenota.objects.get(user=user, corso=corso)
     operator = user.groups.filter(name='Operators').exists()
 
     if corso.posti_prenotati <= corso.cap and not operator and not pren:
@@ -46,12 +50,31 @@ def prenotazione(request, corsoID):
         prenotazione.save()
         return HttpResponseRedirect('/courseManager/'+CourseName)
 
-    if pren:
+    if pren and pren.cancellato == False:
         messages.add_message(request, messages.ERROR, 'Sei già prenotato al corso!')
     elif operator:
         messages.add_message(request, messages.ERROR, 'Sei un operatore, non puoi prenotarti ad un corso!')
+    elif pren and pren.cancellato == True:
+        pren.cancellato = False
+        corso.posti_prenotati += 1
+        corso.save()
+        pren.save()
 
     return HttpResponseRedirect('/courseManager/'+CourseName)
+
+@login_required
+def cancellaPrenotazione(request, corsoID):
+    corso = Corso.objects.get(pk=corsoID)
+    CourseName = corso.nome
+    prenotazione = Prenota.objects.get(user=request.user, corso=corso)
+    #cancellazione della prenotazione
+    corso.posti_prenotati = corso.posti_prenotati - 1
+    prenotazione.cancellato = True
+    #salvataggio nel db
+    corso.save()
+    prenotazione.save()
+
+    return HttpResponseRedirect('/courseManager/' + CourseName)
 
 
 @login_required

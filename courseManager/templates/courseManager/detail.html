@@ -26,10 +26,12 @@
             <p>Ora fine: {{ course.ora_fine }}</p>
             <p>Posti disponibili: {{ posti_disponibili|get_at_index:forloop.counter0 }} </p>
             <p>Sala: {{ course.sala.id }}</p>
-            {% if posti_disponibili|get_at_index:forloop.counter0 > 0 and course.id not in prenotazioni %}
+            {% if posti_disponibili|get_at_index:forloop.counter0 > 0 and course.id not in prenotazioni  %}
+                <a class="btn btn-primary" style="color:white; cursor: pointer;" href="{% url 'courseManager:prenotazione' course.id %}">Prenota</a>
+            {% elif posti_disponibili|get_at_index:forloop.counter0 > 0 and course.id in prenotazioni and prenotazioniCancellate|get_cancellata:course.id %}
                 <a class="btn btn-primary" style="color:white; cursor: pointer;" href="{% url 'courseManager:prenotazione' course.id %}">Prenota</a>
             {% elif posti_disponibili|get_at_index:forloop.counter0 > 0 %}
-                 <a class="btn btn-primary" style="color:white; cursor: pointer;" href="{% url 'courseManager:prenotazione' course.id %}">Cancella prenotazione</a>
+                 <a class="btn btn-primary" style="color:white; cursor: pointer;" href="{% url 'courseManager:cancellaPrenotazione' course.id %}">Cancella prenotazione</a>
             {% else %}
                 <a class="btn btn-primary" style="color:white; cursor: pointer;" href="">Mettiti in lista di attesa</a>
             {% endif %}

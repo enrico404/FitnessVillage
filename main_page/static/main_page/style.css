@@ -53,6 +53,7 @@ body {
     transition: ease-in 0.13s;
 }
 
+
 .assistenza{
     float:left;
 }
@@ -76,6 +77,7 @@ body {
 .containerMessages {
     border: 1px solid gray;
     height:1000px;
+    overflow:scroll;
     margin-top: 50px;
 }
 
@@ -85,20 +87,41 @@ body {
     border-top: 1px solid gray;
     border-radius: 0px;
     width: 100%;
-
+    margin-top: 40px;
 
 }
 
 .card {
-    margin-bottom: -50px;
+    margin-bottom: -20px;
 }
 
 .card:hover{
-    background-color: gray;
+    background-color: #b5b5b5;
     transition: 0.2s ease-in;
     cursor: pointer;
-    subtitle.color: white;
-    color:white;
+    color:white; !important
+
 }
 
+.messaggioPrecendente{
+    border:none;
+    border-bottom: 1px solid gray;
+    border-top: 1px solid gray;
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-bottom: 50px;
+    width: 85%;
+    padding-top: 20px;
+    padding-bottom: 20px;
 
+}
+
+.responseMessage {
+    margin-left: 50px;
+    margin-top: 5%;
+    border:none;
+    border-bottom: 1px solid gray;
+    border-top: 1px solid gray;
+    padding: 20px;
+    width: 85%;
+}

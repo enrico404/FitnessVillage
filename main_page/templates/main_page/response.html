@@ -4,7 +4,24 @@
 <link rel="stylesheet" type="text/css" href="{% static 'main_page/style.css' %}" />
 {% endblock %}
 {% block body %}
-    <form method="post" style="margin-left: 50px; margin-top: 5%; border: 1px solid black; padding: 20px; width: 800px;">
+
+     <section>
+        <p>Torna ai <a href="{% url 'main_page:messaggi' %}">messaggi</a></p>
+    </section>
+    <br><br>
+    <h4>Messaggio</h4>
+    <div class="messaggioPrecendente">
+        <span>Mittente: </span><input type="text" name="MsgMittente" value="{{ message.userMittente }}" class="fixedFields"><br><br>
+        <span>Destinatario: </span><input type="text" name="MsgDestinatario" value="{{ message.userDestinatario }}" class="fixedFields"><br><br>
+        <p>Data: {{ message.data_ora }}</p>
+        <p>Testo: </p>
+        <p style="padding-left: 50px;">{{ message.text }}</p>
+
+
+    </div>
+
+    <h4>Risposta</h4>
+    <form method="post" class="responseMessage">
         {% csrf_token %}
         <span>Mittente: </span><input type="text" name="mittente" value="{{ mittente }}" class="fixedFields"><br><br>
         <span>Destinatario: </span><input type="text" name="destinatario" value="{{ destinatario }}" class="fixedFields"><br><br>
