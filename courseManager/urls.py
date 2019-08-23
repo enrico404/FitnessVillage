@@ -8,4 +8,5 @@ urlpatterns = [
     path('<int:corsoID>/cancellaPrenotazione', views.cancellaPrenotazione, name='cancellaPrenotazione'),
     path('<str:nomeCorso>/insertCourse', views.insert, name='insert'),
     path('cancella/<int:corsoID>/<str:nomeCorso>', views.cancella, name='cancella'),
+    path('listaAttesa/<int:corsoID>/<str:nomeCorso>', views.listaAttesa, name='listaAttesa'),
 ]

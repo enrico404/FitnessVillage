@@ -36,3 +36,13 @@ class Messaggio(models.Model):
     text = models.CharField(max_length=500)
     letto = models.BooleanField(default=False)
 
+
+class ListaAttesa(models.Model):
+    corso = models.ForeignKey(Corso, on_delete=models.CASCADE)
+
+
+class Inserito(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    listaAttesa = models.ForeignKey(ListaAttesa, on_delete=models.CASCADE)
+    cancellato = models.BooleanField(default=False)
+

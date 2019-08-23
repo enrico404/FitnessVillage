@@ -6,11 +6,13 @@
 {% endblock %}
 {% block body %}
 <head>
+    <div class="login"><p style="font-size: 11pt;">Benvenuto <b>{{ user.username }}</b>. Effettua il <a href="{% url 'main_page:logout_view' %}">logout</a></p></div>
     <h2 class="title">Corso di {{ nomeCorso }}</h2>
 
     <section>
         <p>Torna alla <a href="{% url 'main_page:welcome' %}">Home</a></p>
     </section>
+
 </head>
 
     {% for message in messages %}
@@ -30,10 +32,10 @@
                 <a class="btn btn-primary" style="color:white; cursor: pointer;" href="{% url 'courseManager:prenotazione' course.id %}">Prenota</a>
             {% elif posti_disponibili|get_at_index:forloop.counter0 > 0 and course.id in prenotazioni and prenotazioniCancellate|get_cancellata:course.id %}
                 <a class="btn btn-primary" style="color:white; cursor: pointer;" href="{% url 'courseManager:prenotazione' course.id %}">Prenota</a>
-            {% elif posti_disponibili|get_at_index:forloop.counter0 > 0 %}
+            {% elif course.id in prenotazioni and not prenotazioniCancellate|get_cancellata:course.id %}
                  <a class="btn btn-primary" style="color:white; cursor: pointer;" href="{% url 'courseManager:cancellaPrenotazione' course.id %}">Cancella prenotazione</a>
             {% else %}
-                <a class="btn btn-primary" style="color:white; cursor: pointer;" href="">Mettiti in lista di attesa</a>
+                <a class="btn btn-primary" style="color:white; cursor: pointer;" href="{% url 'courseManager:listaAttesa' course.id nomeCorso %}">Mettiti in lista di attesa</a>
             {% endif %}
             {% if user|has_group:'Operators' or user.username == 'admin' %}
                 <a class="btn btn-danger" style="color:white; cursor: pointer;" href="{% url 'courseManager:cancella' course.id nomeCorso %}">Cancella</a>

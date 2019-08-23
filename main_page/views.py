@@ -2,18 +2,31 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout
-from .models import User, Messaggio
+from .models import User, Messaggio, Prenota, ListaAttesa, Inserito
 from .forms import ContactForm
 from django.contrib import messages
 from django.db.models import Q
-
-
 import random
+from django.utils import timezone
+
+
+def controlList(user):
+    insListe = Inserito.objects.filter(user=user, cancellato=False).select_related('listaAttesa')
+    for l in insListe:
+        numPosti = l.listaAttesa.corso.cap - l.listaAttesa.corso.posti_prenotati
+        if numPosti > 0:
+            testo = "Si è liberato un posto per il corso "+l.listaAttesa.corso.nome+ " che si tiene il "+ str(l.listaAttesa.corso.data)
+            noreply = User.objects.get(username='noreply')
+            notifica = Messaggio(userMittente=noreply, userDestinatario=user, data_ora=timezone.now(), text=testo)
+            notifica.save()
 
 def welcome(request):
+
     # flag che indica se sono presenti oppure no nuovi messaggi nella casella di posta
     new_messages = False
     if request.user.is_authenticated:
+        # controllo le liste di attesa a cui è prenotato l'utente
+        controlList(request.user)
         messaggi = Messaggio.objects.filter(userDestinatario=request.user)
         for msg in messaggi:
             if msg.letto == False:
@@ -28,9 +41,11 @@ def logout_view(request):
     logout(request)
     return HttpResponseRedirect('/')
 
+
 @login_required
 def login(request):
     return HttpResponseRedirect('/')
+
 
 @login_required
 def assistenza(request):

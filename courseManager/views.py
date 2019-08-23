@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils import timezone
-from main_page.models import Corso, Prenota
+from main_page.models import Corso, Prenota, ListaAttesa, Inserito
 from django.shortcuts import HttpResponseRedirect
 from django.contrib import messages
 from .forms import CourseInsertForm
@@ -36,12 +36,15 @@ def courseDetail(request, nomeCorso):
 
 @login_required
 def prenotazione(request, corsoID):
-    corso = Corso.objects.get(pk=corsoID)
+    corso = Corso.objects.get(id=corsoID)
     user = request.user
     CourseName = corso.nome
     prenotazione = Prenota(user=user, corso=corso, cancellato=False)
-    #flag per cedere se esiste la prenotazione
-    pren = Prenota.objects.get(user=user, corso=corso)
+    #flag per vedere se esiste la prenotazione
+    pren = Prenota.objects.filter(user=user, corso=corso)
+
+
+    #se l'utente appartiene al gruppo degli operatori vale true
     operator = user.groups.filter(name='Operators').exists()
 
     if corso.posti_prenotati <= corso.cap and not operator and not pren:
@@ -50,15 +53,15 @@ def prenotazione(request, corsoID):
         prenotazione.save()
         return HttpResponseRedirect('/courseManager/'+CourseName)
 
-    if pren and pren.cancellato == False:
+    if pren and pren[0].cancellato == False:
         messages.add_message(request, messages.ERROR, 'Sei già prenotato al corso!')
     elif operator:
         messages.add_message(request, messages.ERROR, 'Sei un operatore, non puoi prenotarti ad un corso!')
-    elif pren and pren.cancellato == True:
-        pren.cancellato = False
+    elif pren and pren[0].cancellato == True:
+        pren[0].cancellato = False
         corso.posti_prenotati += 1
         corso.save()
-        pren.save()
+        pren[0].save()
 
     return HttpResponseRedirect('/courseManager/'+CourseName)
 
@@ -92,8 +95,8 @@ def insert(request, nomeCorso):
             ora_fine = form.cleaned_data['ora_fine']
             newCourse = Corso(nome=nome, data=data, operatore=operatore, cap=capienza, sala=sala, ora_inizio=ora_inizio, ora_fine=ora_fine, posti_prenotati=posti_prenotati)
             #se il corso non esiste già
-            corsi_del_giorno = Corso.objects.filter(Q(nome=nome), Q(data__year=data.year), Q(data__month=data.month), Q(data__day=data.day), Q(sala=sala))
-            #chechk che la sala non sia occupata in quell'ora, se è occupata esco
+            corsi_del_giorno = Corso.objects.filter(Q(data__year=data.year), Q(data__month=data.month), Q(data__day=data.day), Q(sala=sala))
+            #check che la sala non sia occupata in quell'ora, se è occupata esco
             for corso in corsi_del_giorno:
                 if not (corso.ora_fine <= ora_inizio or corso.ora_inizio >= ora_fine):
                     messages.add_message(request, messages.ERROR, 'La sala è già occupata da un altro corso!')
@@ -101,6 +104,9 @@ def insert(request, nomeCorso):
             if sala.cap_max >= newCourse.cap:
                 newCourse.save()
                 messages.add_message(request, messages.SUCCESS, 'Corso inserito con successo!')
+                #creo lista di attesa per quel corso
+                listaAttesa = ListaAttesa(corso=newCourse)
+                listaAttesa.save()
                 return HttpResponseRedirect('/courseManager/' + nomeCorso)
             else:
                 messages.add_message(request, messages.ERROR, "La capienza del corso supera la capienza massima della sala!")
@@ -113,10 +119,52 @@ def insert(request, nomeCorso):
 
 @login_required
 def cancella(request, corsoID, nomeCorso):
-    ''' il corso in realtà non si cancella dal database, viene cambiato solo il flag di cancellazione '''
+    """
+    :param request:
+    :param corsoID:
+    :param nomeCorso:
+    :return:
+
+    funzione per la cancellazione del corso
+    """
     corso = Corso.objects.get(pk=corsoID)
     corso.cancellato = True
     # cambio data così non dà fastidio all'inserimento
     corso.data = datetime.date(3000, 12, 12)
     corso.save()
     return HttpResponseRedirect('/courseManager/' + nomeCorso)
+
+@login_required
+def listaAttesa(request, corsoID, nomeCorso):
+    """
+    :param request:
+    :param corsoID:
+    :param nomeCorso:
+    :return: s
+
+    funzione per l'inserimento in lista di attesa di un utente in un corso
+    """
+    corso = Corso.objects.get(pk=corsoID)
+    lista = ListaAttesa.objects.get(corso=corso)
+    insLista = Inserito(user=request.user, listaAttesa=lista)
+
+    operator = request.user.groups.filter(name='Operators').exists()
+    pren = Prenota.objects.filter(user=request.user, corso=corso).exists()
+    if operator:
+        messages.add_message(request, messages.ERROR, 'Sei un operatore, non puoi metterti in lista di attesa in un corso!')
+        return HttpResponseRedirect('/courseManager/' + nomeCorso)
+    if pren:
+        messages.add_message(request, messages.ERROR,
+                             'Sei già prenotato al corso!')
+        return HttpResponseRedirect('/courseManager/' + nomeCorso)
+    checkExists = Inserito.objects.filter(user=request.user, listaAttesa=lista).exists()
+    if not checkExists:
+        insLista.save()
+        messages.add_message(request, messages.SUCCESS, 'Ti sei inserito in lista di attesa per il corso di '+ nomeCorso)
+        return HttpResponseRedirect('/courseManager/' + nomeCorso)
+    else:
+        messages.add_message(request, messages.SUCCESS, 'Sei già in lista di attesa!')
+        return HttpResponseRedirect('/courseManager/' + nomeCorso)
+
+
+
