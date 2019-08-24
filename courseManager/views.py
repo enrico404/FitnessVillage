@@ -43,7 +43,6 @@ def prenotazione(request, corsoID):
     #flag per vedere se esiste la prenotazione
     pren = Prenota.objects.filter(user=user, corso=corso)
 
-
     #se l'utente appartiene al gruppo degli operatori vale true
     operator = user.groups.filter(name='Operators').exists()
 
@@ -64,6 +63,38 @@ def prenotazione(request, corsoID):
         pren[0].save()
 
     return HttpResponseRedirect('/courseManager/'+CourseName)
+
+@login_required
+def listaAttesa(request, corsoID, nomeCorso):
+    """
+    :param request:
+    :param corsoID:
+    :param nomeCorso:
+    :return: s
+
+    funzione per l'inserimento in lista di attesa di un utente in un corso
+    """
+    corso = Corso.objects.get(pk=corsoID)
+    lista = ListaAttesa.objects.get(corso=corso)
+    insLista = Inserito(user=request.user, listaAttesa=lista)
+
+    operator = request.user.groups.filter(name='Operators').exists()
+    pren = Prenota.objects.filter(user=request.user, corso=corso)
+    if operator:
+        messages.add_message(request, messages.ERROR, 'Sei un operatore, non puoi metterti in lista di attesa in un corso!')
+        return HttpResponseRedirect('/courseManager/' + nomeCorso)
+    if pren and pren[0].cancellato == False:
+        messages.add_message(request, messages.ERROR,
+                             'Sei già prenotato al corso!')
+        return HttpResponseRedirect('/courseManager/' + nomeCorso)
+    checkExists = Inserito.objects.filter(user=request.user, listaAttesa=lista, cancellato=False).exists()
+    if not checkExists:
+        insLista.save()
+        messages.add_message(request, messages.SUCCESS, 'Ti sei inserito in lista di attesa per il corso di '+ nomeCorso)
+        return HttpResponseRedirect('/courseManager/' + nomeCorso)
+    else:
+        messages.add_message(request, messages.SUCCESS, 'Sei già in lista di attesa!')
+        return HttpResponseRedirect('/courseManager/' + nomeCorso)
 
 @login_required
 def cancellaPrenotazione(request, corsoID):
@@ -93,9 +124,21 @@ def insert(request, nomeCorso):
             sala = form.cleaned_data['sala']
             ora_inizio = form.cleaned_data['ora_inizio']
             ora_fine = form.cleaned_data['ora_fine']
+            if capienza < 0:
+                messages.add_message(request, messages.ERROR, 'La capienza del corso non può essere negativa!')
+                return HttpResponseRedirect('/courseManager/' + nomeCorso)
+
+            if posti_prenotati < 0:
+                messages.add_message(request, messages.ERROR, 'il numero di posti prenotati non può essere negativo!')
+                return HttpResponseRedirect('/courseManager/' + nomeCorso)
+
+            if capienza < posti_prenotati:
+                messages.add_message(request, messages.ERROR, 'Il numero di posti prenotati non può essere maggiore della capienza del corso!')
+                return HttpResponseRedirect('/courseManager/' + nomeCorso)
+
             newCourse = Corso(nome=nome, data=data, operatore=operatore, cap=capienza, sala=sala, ora_inizio=ora_inizio, ora_fine=ora_fine, posti_prenotati=posti_prenotati)
             #se il corso non esiste già
-            corsi_del_giorno = Corso.objects.filter(Q(data__year=data.year), Q(data__month=data.month), Q(data__day=data.day), Q(sala=sala))
+            corsi_del_giorno = Corso.objects.filter(Q(data__year=data.year), Q(data__month=data.month), Q(data__day=data.day), Q(sala=sala), Q(cancellato=False))
             #check che la sala non sia occupata in quell'ora, se è occupata esco
             for corso in corsi_del_giorno:
                 if not (corso.ora_fine <= ora_inizio or corso.ora_inizio >= ora_fine):
@@ -134,37 +177,7 @@ def cancella(request, corsoID, nomeCorso):
     corso.save()
     return HttpResponseRedirect('/courseManager/' + nomeCorso)
 
-@login_required
-def listaAttesa(request, corsoID, nomeCorso):
-    """
-    :param request:
-    :param corsoID:
-    :param nomeCorso:
-    :return: s
 
-    funzione per l'inserimento in lista di attesa di un utente in un corso
-    """
-    corso = Corso.objects.get(pk=corsoID)
-    lista = ListaAttesa.objects.get(corso=corso)
-    insLista = Inserito(user=request.user, listaAttesa=lista)
-
-    operator = request.user.groups.filter(name='Operators').exists()
-    pren = Prenota.objects.filter(user=request.user, corso=corso).exists()
-    if operator:
-        messages.add_message(request, messages.ERROR, 'Sei un operatore, non puoi metterti in lista di attesa in un corso!')
-        return HttpResponseRedirect('/courseManager/' + nomeCorso)
-    if pren:
-        messages.add_message(request, messages.ERROR,
-                             'Sei già prenotato al corso!')
-        return HttpResponseRedirect('/courseManager/' + nomeCorso)
-    checkExists = Inserito.objects.filter(user=request.user, listaAttesa=lista).exists()
-    if not checkExists:
-        insLista.save()
-        messages.add_message(request, messages.SUCCESS, 'Ti sei inserito in lista di attesa per il corso di '+ nomeCorso)
-        return HttpResponseRedirect('/courseManager/' + nomeCorso)
-    else:
-        messages.add_message(request, messages.SUCCESS, 'Sei già in lista di attesa!')
-        return HttpResponseRedirect('/courseManager/' + nomeCorso)
 
 
 

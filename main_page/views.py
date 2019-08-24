@@ -15,10 +15,15 @@ def controlList(user):
     for l in insListe:
         numPosti = l.listaAttesa.corso.cap - l.listaAttesa.corso.posti_prenotati
         if numPosti > 0:
-            testo = "Si è liberato un posto per il corso "+l.listaAttesa.corso.nome+ " che si tiene il "+ str(l.listaAttesa.corso.data)
+            testo = "Si è liberato un posto per il corso "+l.listaAttesa.corso.nome+ " che si tiene il "+ str(l.listaAttesa.corso.data) + " alle "+ str(l.listaAttesa.corso.ora_inizio)
             noreply = User.objects.get(username='noreply')
             notifica = Messaggio(userMittente=noreply, userDestinatario=user, data_ora=timezone.now(), text=testo)
-            notifica.save()
+            checkEx = Messaggio.objects.filter(userMittente=noreply, userDestinatario=user, text=testo).exists()
+            if not checkEx:
+                notifica.save()
+                changeListRecord = Inserito.objects.get(user=user, listaAttesa=l.listaAttesa)
+                changeListRecord.cancellato = True
+                changeListRecord.save()
 
 def welcome(request):
 
