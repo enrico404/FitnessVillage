@@ -18,10 +18,10 @@
     {% endif %}
     <div class="login"><p style="font-size: 11pt;">Benvenuto <b>{{ user.username }}</b>. Effettua il <a href="{% url 'main_page:logout_view' %}">logout</a></p></div>
 {% else %}
-<p class="login">Effettua il <a href="{% url 'main_page:login' %}">login</a></p>
+<p class="login">Effettua il <a href="{% url 'main_page:login' %}">login</a> o <a href="{% url 'main_page:registrati' %}">registrati</a></p>
 {% endif %}
 <h1 id="mainTitle">Fitness Village</h1>
-
+<p style="text-align:end;"><span class="clock" id="hours">22</span>:<span class="clock" id="min">33</span>:<span class="clock" id="sec">44</span></p>
 {% for message in messages %}
     <p><h4 style="color:red;">{{ message }}</h4></p>
 {% endfor %}

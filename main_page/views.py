@@ -8,6 +8,8 @@ from django.contrib import messages
 from django.db.models import Q
 import random
 from django.utils import timezone
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import Group
 
 
 def controlList(user):
@@ -51,6 +53,23 @@ def logout_view(request):
 def login(request):
     return HttpResponseRedirect('/')
 
+def registrati(request):
+    form = UserCreationForm(request.POST)
+    if request.method == 'POST':
+        if form.is_valid():
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            login(request, user)
+            my_group = Group.objects.get(name='Common')
+            my_group.user_set.add(user)
+            messages.add_message(request, messages.SUCCESS, 'Utente creato con successo!')
+            return HttpResponseRedirect('/')
+        else:
+            for msg in form.error_messages:
+                messages.add_message(request, messages.ERROR, form.error_messages[msg])
+            HttpResponseRedirect('main_page/registration')
+    form = UserCreationForm()
+    return render(request, 'registration/registrati.html', {'form': form})
 
 @login_required
 def assistenza(request):

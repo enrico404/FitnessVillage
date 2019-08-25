@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <h4 style="margin-top: 100px; margin-left:100px;">Registrati!</h4>
+
+    {% if form.errors %}
+    <p style="margin-left: 100px; margin-top: 50px;">Your username and password didn't match. Please try again.</p>
+    {% endif %}
+    <br><br>
+    {% for message in messages %}
+    <p><h4 style="color:red; margin-left: 10%;">{{ message }}</h4></p>
+    {% endfor %}
+    <form method="post" style="margin-left: 10%; margin-top: 5%; border: 1px solid black; padding: 20px; width: 450px;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {% if next %}
+            <input type="hidden" name="next" value="{{ next }}" />
+        {% else %}
+            <input type="hidden" name="next" value="/main_page" />
+        {% endif %}
+        <input type="submit" value="Registrati" />
+    </form>
+{% endblock %}
