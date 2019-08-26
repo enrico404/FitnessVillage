@@ -13,6 +13,11 @@ from django.contrib.auth.models import Group
 
 
 def controlList(user):
+    """
+    funzione che manda le notifiche agli utenti, si attiva non appena l'utente carica la home
+    :param user:
+    :return:
+    """
     insListe = Inserito.objects.filter(user=user, cancellato=False).select_related('listaAttesa')
     for l in insListe:
         numPosti = l.listaAttesa.corso.cap - l.listaAttesa.corso.posti_prenotati

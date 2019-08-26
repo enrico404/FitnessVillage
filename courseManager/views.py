@@ -2,14 +2,16 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils import timezone
 from main_page.models import Corso, Prenota, ListaAttesa, Inserito
-from django.shortcuts import HttpResponseRedirect
+from django.shortcuts import HttpResponseRedirect, HttpResponse, Http404
 from django.contrib import messages
 from .forms import CourseInsertForm
 from django.db.models import Q
+from django.http import Http404
 import datetime
 
 @login_required
 def courseDetail(request, nomeCorso):
+    listaCorsi = ['box','aerobica','mma','yoga','crossfit','pilates']
     course_set_tmp = Corso.objects.filter(data__gte=timezone.now(), nome__exact=nomeCorso).order_by('data', 'ora_inizio')
     course_set = []
     for course in course_set_tmp:
@@ -32,7 +34,10 @@ def courseDetail(request, nomeCorso):
     prenotazioniCancellate = []
     for pren in prenotazioni_tmp:
         prenotazioniCancellate.append(pren)
-    return render(request, 'courseManager/detail.html', {'nomeCorso': nomeCorso, 'course_set': course_set, 'posti_disponibili': posti_disponibili, 'prenotazioni':prenotazioni, 'prenotazioniCancellate':prenotazioniCancellate})
+    if nomeCorso in listaCorsi:
+        return render(request, 'courseManager/detail.html', {'nomeCorso': nomeCorso, 'course_set': course_set, 'posti_disponibili': posti_disponibili, 'prenotazioni':prenotazioni, 'prenotazioniCancellate':prenotazioniCancellate})
+    else:
+        raise Http404
 
 @login_required
 def prenotazione(request, corsoID):
@@ -124,13 +129,6 @@ def insert(request, nomeCorso):
             sala = form.cleaned_data['sala']
             ora_inizio = form.cleaned_data['ora_inizio']
             ora_fine = form.cleaned_data['ora_fine']
-            if capienza < 0:
-                messages.add_message(request, messages.ERROR, 'La capienza del corso non può essere negativa!')
-                return HttpResponseRedirect('/courseManager/' + nomeCorso)
-
-            if posti_prenotati < 0:
-                messages.add_message(request, messages.ERROR, 'il numero di posti prenotati non può essere negativo!')
-                return HttpResponseRedirect('/courseManager/' + nomeCorso)
 
             if capienza < posti_prenotati:
                 messages.add_message(request, messages.ERROR, 'Il numero di posti prenotati non può essere maggiore della capienza del corso!')
