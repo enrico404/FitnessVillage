@@ -11,6 +11,9 @@
         </section>
         <h2 style="margin-left: 45%;">Corso di {{ nomeCorso }}</h2>
     </head>
+    {% for message in messages %}
+    <p><h4 style="color:red;">{{ message }}</h4></p>
+    {% endfor %}
     <form method="post" style="margin-left: 50px; margin-top: 5%; border: 1px solid black; padding: 20px; width: 800px;">
             {% csrf_token %}
             <p>Nome: </p><input type="text" name="nome" value="{{ nomeCorso }}" class="fixedFields">

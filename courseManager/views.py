@@ -142,8 +142,9 @@ def insert(request, nomeCorso):
             #check che la sala non sia occupata in quell'ora, se è occupata esco
             for corso in corsi_del_giorno:
                 if not (corso.ora_fine <= ora_inizio or corso.ora_inizio >= ora_fine):
-                    messages.add_message(request, messages.ERROR, 'La sala è già occupata da un altro corso!')
-                    return HttpResponseRedirect('/courseManager/' + nomeCorso)
+                    msg = 'La sala è già occupata da un altro corso dalle '+ str(corso.ora_inizio) + ' alle '+ str(corso.ora_fine)
+                    messages.add_message(request, messages.ERROR, msg)
+                    return HttpResponseRedirect('/courseManager/' + nomeCorso+ '/insertCourse')
             if sala.cap_max >= newCourse.cap:
                 newCourse.save()
                 messages.add_message(request, messages.SUCCESS, 'Corso inserito con successo!')
@@ -152,7 +153,8 @@ def insert(request, nomeCorso):
                 listaAttesa.save()
                 return HttpResponseRedirect('/courseManager/' + nomeCorso)
             else:
-                messages.add_message(request, messages.ERROR, "La capienza del corso supera la capienza massima della sala!")
+                msg = "La capienza del corso supera la capienza massima della sala! (max "+ str(sala.cap_max)+ ' posti)'
+                messages.add_message(request, messages.ERROR, msg)
         messages.add_message(request, messages.ERROR, "Errore nell'inserimento del corso!")
         return HttpResponseRedirect('/courseManager/' + nomeCorso)
     else:

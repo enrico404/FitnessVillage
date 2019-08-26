@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main_page.apps.MainPageConfig',
     'courseManager.apps.CoursemanagerConfig',
-    'reset_migrations',
 ]
 
 MIDDLEWARE = [
