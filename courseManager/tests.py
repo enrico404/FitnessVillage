@@ -7,7 +7,7 @@ import datetime
 from main_page.models import Sala
 from django.contrib .messages import get_messages
 from django.contrib.auth.models import Group, User
-from main_page.models import Corso
+from main_page.models import Corso, ListaAttesa, Inserito
 
 class CourseTests(TestCase):
 
@@ -87,6 +87,12 @@ class PrenotazioneTests(TestCase):
                       ora_inizio=datetime.time(00, 00), ora_fine=datetime.time(00, 00), posti_prenotati=0)
         self.corso.save()
 
+        self.listaAttesa = ListaAttesa(id=1, corso=self.corso)
+
+        self.listaAttesa.save()
+
+
+        self.listaAttesaUrl = reverse('courseManager:listaAttesa', args=[self.corso.id, self.nomeCorso])
         self.prenUrl = reverse('courseManager:prenotazione', args=[self.corso.id])
 
     def test_prenotazione_operatore(self):
@@ -106,5 +112,40 @@ class PrenotazioneTests(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), 'Prenotato con successo!')
+        self.client.logout()
 
+    def test_lista_attesa_operatore(self):
+        self.client.login(username='operator', password='operator123')
+        response = self.client.get(self.listaAttesaUrl)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(str(messages[0]), 'Sei un operatore, non puoi metterti in lista di attesa in un corso!')
+        self.client.logout()
+
+    def test_lista_attesa_user(self):
+        self.client.login(username='testUser', password='testUser123')
+        response = self.client.get(self.listaAttesaUrl)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(str(messages[0]), 'Ti sei inserito in lista di attesa per il corso di '+ self.nomeCorso)
+        self.client.logout()
+        user = User.objects.get(username='testUser')
+        inserimento = Inserito.objects.get(user=user, listaAttesa=self.listaAttesa)
+        self.assertTrue(inserimento)
+
+    def test_insLista_due_volte(self):
+        #first insert
+        self.client.login(username='testUser', password='testUser123')
+        response = self.client.get(self.listaAttesaUrl)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(str(messages[0]), 'Ti sei inserito in lista di attesa per il corso di ' + self.nomeCorso)
+        user = User.objects.get(username='testUser')
+        inserimento = Inserito.objects.get(user=user, listaAttesa=self.listaAttesa)
+        self.assertTrue(inserimento)
+        #second insert
+        response = self.client.get(self.listaAttesaUrl)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 2)
+        self.assertEqual(str(messages[1]), 'Sei già in lista di attesa!')
         self.client.logout()

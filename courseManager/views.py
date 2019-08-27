@@ -99,7 +99,7 @@ def listaAttesa(request, corsoID, nomeCorso):
         messages.add_message(request, messages.SUCCESS, 'Ti sei inserito in lista di attesa per il corso di '+ nomeCorso)
         return HttpResponseRedirect('/courseManager/' + nomeCorso)
     else:
-        messages.add_message(request, messages.SUCCESS, 'Sei già in lista di attesa!')
+        messages.add_message(request, messages.ERROR, 'Sei già in lista di attesa!')
         return HttpResponseRedirect('/courseManager/' + nomeCorso)
 
 @login_required

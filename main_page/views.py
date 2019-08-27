@@ -33,6 +33,7 @@ def controlList(user):
                 changeListRecord.save()
 
 def welcome(request):
+
     # flag che indica se sono presenti oppure no nuovi messaggi nella casella di posta
     new_messages = False
     if request.user.is_authenticated:
@@ -100,7 +101,7 @@ def messaggi(request):
     messaggi = Messaggio.objects.filter(Q(userDestinatario=request.user)).order_by('data_ora').reverse()
     return render(request, 'main_page/messaggi.html', {'messaggi': messaggi})
 
-@login_required
+@login_required()
 def rispondi(request, messageID):
     form = ContactForm(request.POST)
     message = Messaggio.objects.get(id=messageID)

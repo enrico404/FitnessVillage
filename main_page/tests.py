@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.models import Group, User
 from .models import Messaggio
 from django.utils import timezone
+from django.contrib .messages import get_messages
 
 
 class MainPage_view_Tests(TestCase):
@@ -52,3 +53,31 @@ class MainPage_view_Tests(TestCase):
         response = self.client.get(self.reponseUrl)
         self.assertTemplateUsed(response, 'main_page/response.html')
         self.assertEqual(response.status_code, 200)
+
+class MessageTests(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        testUser, created1 = User.objects.get_or_create(username='testUser')
+        testUser2, created2 = User.objects.get_or_create(username='testUser2')
+        testGroup, created3 = Group.objects.get_or_create(name='Common')
+        if created1:
+            testUser.set_password('testUser123')
+            testUser.save()
+            testUser.groups.add(testGroup)
+
+        if created2:
+            testUser2.set_password('testUser2123')
+            testUser2.save()
+            testUser2.groups.add(testGroup)
+        self.client.login(username='testUser', password='testUser123')
+
+        msg = Messaggio(userMittente=testUser, userDestinatario=testUser2, data_ora=timezone.now(), text='test')
+        msg.save()
+        self.msgUrl = reverse('main_page:rispondi', args=[msg.pk])
+
+    def test_invio_messaggio(self):
+        response = self.client.post(self.msgUrl, data={'form': {'data': timezone.now(), 'messaggio':'prova'}})
+        messages = list(get_messages(response.wsgi_request))
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(str(messages[0]), 'Messaggio inviato con successo!')
