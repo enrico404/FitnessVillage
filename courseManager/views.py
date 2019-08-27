@@ -55,6 +55,7 @@ def prenotazione(request, corsoID):
         corso.posti_prenotati += 1
         corso.save()
         prenotazione.save()
+        messages.add_message(request, messages.SUCCESS, 'Prenotato con successo!')
         return HttpResponseRedirect('/courseManager/'+CourseName)
 
     if pren and pren[0].cancellato == False:
@@ -66,7 +67,7 @@ def prenotazione(request, corsoID):
         corso.posti_prenotati += 1
         corso.save()
         pren[0].save()
-
+        messages.add_message(request, messages.SUCCESS, 'Prenotato con successo!')
     return HttpResponseRedirect('/courseManager/'+CourseName)
 
 @login_required
