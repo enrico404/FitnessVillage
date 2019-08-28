@@ -26,29 +26,30 @@ class CourseTests(TestCase):
 
     def test_insertCourse_with_blank_data(self):
         response = self.client.get(self.insertUrl)
+        sala = Sala.objects.create(num=1, cap_max=10)
         form_data = {
-            'data': '',
+            'date': timezone.now(),
             'capienza': 0,
-            'ora_inizio': '',
-            'ora_fine': '',
+            'ora_inizio': datetime.time(00,00),
+            'ora_fine': datetime.time(00,00),
             'posti_prenotati': 0,
-            'sala': ''
+            'sala': 0
         }
-        test_form = CourseInsertForm(data=form_data)
+        test_form = CourseInsertForm(form_data)
         self.assertFalse(test_form.is_valid())
 
     def test_insertCourse_with_negative_data(self):
         response = self.client.get(self.insertUrl)
         sala = Sala.objects.create(num=1, cap_max=10)
         form_data = {
-            'data': timezone.now(),
+            'date': timezone.now(),
             'capienza': -10,
             'ora_inizio': datetime.time(00, 00),
             'ora_fine': datetime.time(00, 00),
             'posti_prenotati': -10,
-            'sala': sala
+            'sala': sala.pk
         }
-        test_form = CourseInsertForm(data=form_data)
+        test_form = CourseInsertForm(form_data)
         self.assertFalse(test_form.is_valid())
 
     def test_non_existing_course(self):

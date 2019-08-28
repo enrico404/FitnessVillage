@@ -15,10 +15,8 @@ def courseDetail(request, nomeCorso):
     course_set_tmp = Corso.objects.filter(data__gte=timezone.now(), nome__exact=nomeCorso).order_by('data', 'ora_inizio')
     course_set = []
     for course in course_set_tmp:
-        if course.data == datetime.date.today():
-            if course.ora_fine < datetime.datetime.now().time():
-                continue
-        course_set.append(course)
+        if not course.scaduto():
+            course_set.append(course)
 
     posti_disponibili = []
     for course in course_set:
@@ -123,7 +121,7 @@ def insert(request, nomeCorso):
     if request.method == 'POST':
         if form.is_valid():
             nome = nomeCorso
-            data = form.cleaned_data['data']
+            data = form.cleaned_data['date']
             capienza = form.cleaned_data['capienza']
             posti_prenotati = form.cleaned_data['posti_prenotati']
             operatore = request.user

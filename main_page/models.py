@@ -22,6 +22,11 @@ class Corso(models.Model):
     posti_prenotati = models.IntegerField()
     cancellato = models.BooleanField(default=False)
 
+    def scaduto(self):
+        if self.data <= datetime.date.today():
+            if self.ora_fine < datetime.datetime.now().time():
+                return True
+        return False
 
 class Prenota(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

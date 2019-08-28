@@ -86,7 +86,7 @@ def assistenza(request):
         if form.is_valid():
             mittente = request.user
             destinatario = random_operator
-            data = form.cleaned_data['data']
+            data = form.cleaned_data['date']
             testo = form.cleaned_data['messaggio']
             messaggio = Messaggio(userMittente=mittente, userDestinatario=destinatario, data_ora=data, text=testo)
             messaggio.save()
@@ -112,7 +112,7 @@ def rispondi(request, messageID):
     destinatario = message.userMittente
     if request.method == 'POST':
         if form.is_valid():
-            data = form.cleaned_data['data']
+            data = form.cleaned_data['date']
             testo = form.cleaned_data['messaggio']
             messaggio = Messaggio(userMittente=mittente, userDestinatario=destinatario, data_ora=data, text=testo)
             messaggio.save()
