@@ -99,7 +99,7 @@ class CorsoMethodTests(TestCase):
             self.testUser.save()
             self.testUser.groups.add(testGroup)
 
-        self.sala = Sala(id=1, cap_max=10, num=1)
+        self.sala = Sala(id=1, cap_max=10)
 
     def test_scaduto_with_current_time(self):
         ora_inizio = datetime.datetime.now()

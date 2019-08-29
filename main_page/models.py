@@ -7,7 +7,6 @@ from django.shortcuts import get_object_or_404
 
 class Sala(models.Model):
     cap_max = models.IntegerField()
-    num = models.IntegerField()
     cancellato = models.BooleanField(default=False)
 
 

@@ -26,7 +26,7 @@ class CourseTests(TestCase):
 
     def test_insertCourse_with_blank_data(self):
         response = self.client.get(self.insertUrl)
-        sala = Sala.objects.create(num=1, cap_max=10)
+        sala = Sala.objects.create(cap_max=10)
         form_data = {
             'date': timezone.now(),
             'capienza': 0,
@@ -40,7 +40,7 @@ class CourseTests(TestCase):
 
     def test_insertCourse_with_negative_data(self):
         response = self.client.get(self.insertUrl)
-        sala = Sala.objects.create(num=1, cap_max=10)
+        sala = Sala.objects.create(cap_max=10)
         form_data = {
             'date': timezone.now(),
             'capienza': -10,
@@ -81,7 +81,7 @@ class PrenotazioneTests(TestCase):
             operator.groups.add(groupOp)
 
         self.insertUrl = reverse('courseManager:insert', args=[self.nomeCorso])
-        self.sala = Sala(id=1, cap_max=10, num=1)
+        self.sala = Sala(id=1, cap_max=10)
         self.sala.save()
 
         self.corso = Corso(nome=self.nomeCorso, data=timezone.now(), operatore=operator, cap=10, sala=self.sala,
