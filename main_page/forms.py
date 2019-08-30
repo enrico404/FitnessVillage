@@ -1,8 +1,9 @@
 from django import forms
 from django.utils import timezone
+import datetime
 
 class ContactForm(forms.Form):
-    date = forms.DateTimeField(initial=timezone.now(), disabled=True)
+    date = forms.DateTimeField(initial=datetime.datetime.today(), disabled=True)
     messaggio = forms.CharField(widget=forms.Textarea)
 
 

@@ -2,7 +2,6 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from .forms import CourseInsertForm
-from django.utils import timezone
 import datetime
 from main_page.models import Sala
 from django.contrib .messages import get_messages
@@ -28,7 +27,7 @@ class CourseTests(TestCase):
         response = self.client.get(self.insertUrl)
         sala = Sala.objects.create(cap_max=10)
         form_data = {
-            'date': timezone.now(),
+            'date': datetime.datetime.today(),
             'capienza': 0,
             'ora_inizio': datetime.time(00,00),
             'ora_fine': datetime.time(00,00),
@@ -42,7 +41,7 @@ class CourseTests(TestCase):
         response = self.client.get(self.insertUrl)
         sala = Sala.objects.create(cap_max=10)
         form_data = {
-            'date': timezone.now(),
+            'date': datetime.datetime.today(),
             'capienza': -10,
             'ora_inizio': datetime.time(00, 00),
             'ora_fine': datetime.time(00, 00),
@@ -84,7 +83,7 @@ class PrenotazioneTests(TestCase):
         self.sala = Sala(id=1, cap_max=10)
         self.sala.save()
 
-        self.corso = Corso(nome=self.nomeCorso, data=timezone.now(), operatore=operator, cap=10, sala=self.sala,
+        self.corso = Corso(nome=self.nomeCorso, data=datetime.datetime.today(), operatore=operator, cap=10, sala=self.sala,
                       ora_inizio=datetime.time(00, 00), ora_fine=datetime.time(00, 00), posti_prenotati=0)
         self.corso.save()
 

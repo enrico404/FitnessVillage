@@ -7,7 +7,7 @@ from .forms import ContactForm
 from django.contrib import messages
 from django.db.models import Q
 import random
-from django.utils import timezone
+import datetime
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import Group
 
@@ -24,7 +24,7 @@ def controlList(user):
         if numPosti > 0:
             testo = "Si è liberato un posto per il corso "+l.listaAttesa.corso.nome+ " che si tiene il "+ str(l.listaAttesa.corso.data) + " alle "+ str(l.listaAttesa.corso.ora_inizio)
             noreply = User.objects.get(username='noreply')
-            notifica = Messaggio(userMittente=noreply, userDestinatario=user, data_ora=timezone.now(), text=testo)
+            notifica = Messaggio(userMittente=noreply, userDestinatario=user, data_ora=datetime.datetime.today(), text=testo)
             checkEx = Messaggio.objects.filter(userMittente=noreply, userDestinatario=user, text=testo).exists()
             if not checkEx:
                 notifica.save()

@@ -3,7 +3,6 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import Group, User
 from .models import Messaggio, Corso, Sala
-from django.utils import timezone
 from django.contrib .messages import get_messages
 import datetime
 from .forms import ContactForm
@@ -30,7 +29,7 @@ class MainPage_view_Tests(TestCase):
         self.contactUrl = reverse('main_page:assistenza')
         self.messaggiUrl = reverse('main_page:messaggi')
 
-        self.msg = Messaggio(userMittente=testUser, userDestinatario=testUser2, data_ora=timezone.now(), text='test')
+        self.msg = Messaggio(userMittente=testUser, userDestinatario=testUser2, data_ora=datetime.datetime.today(), text='test')
         self.msg.save()
 
         self.reponseUrl = reverse('main_page:rispondi', args=[self.msg.id])
@@ -73,12 +72,12 @@ class MessageTests(TestCase):
             testUser2.groups.add(testGroup)
         self.client.login(username='testUser', password='testUser123')
 
-        msg = Messaggio(id=1, userMittente=self.testUser, userDestinatario=testUser2, data_ora=timezone.now(), text='test')
+        msg = Messaggio(id=1, userMittente=self.testUser, userDestinatario=testUser2, data_ora=datetime.datetime.today(), text='test')
         msg.save()
         self.msgUrl = reverse('main_page:rispondi', args=[msg.id])
 
     def test_invio_messaggio(self):
-        form = ContactForm({'date': timezone.now(),'messaggio':'prova'})
+        form = ContactForm({'date': datetime.datetime.today(),'messaggio':'prova'})
         response = self.client.post(self.msgUrl, data=form.data)
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)

@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.utils import timezone
 from main_page.models import Corso, Prenota, ListaAttesa, Inserito
 from django.shortcuts import HttpResponseRedirect, HttpResponse, Http404
 from django.contrib import messages
@@ -12,7 +11,7 @@ import datetime
 @login_required
 def courseDetail(request, nomeCorso):
     listaCorsi = ['box','aerobica','mma','yoga','crossfit','pilates']
-    course_set_tmp = Corso.objects.filter(data__gte=timezone.now(), nome__exact=nomeCorso).order_by('data', 'ora_inizio')
+    course_set_tmp = Corso.objects.filter(data__gte=datetime.datetime.today(), nome__exact=nomeCorso).order_by('data', 'ora_inizio')
     course_set = []
     for course in course_set_tmp:
         if not course.scaduto():
@@ -152,7 +151,6 @@ def insert(request, nomeCorso):
             else:
                 msg = "La capienza del corso supera la capienza massima della sala! (max "+ str(sala.cap_max)+ ' posti)'
                 messages.add_message(request, messages.ERROR, msg)
-        messages.add_message(request, messages.ERROR, "Errore nell'inserimento del corso!")
         return HttpResponseRedirect('/courseManager/' + nomeCorso)
     else:
         form = CourseInsertForm()
