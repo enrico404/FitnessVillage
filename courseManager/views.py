@@ -10,6 +10,12 @@ import datetime
 
 @login_required
 def courseDetail(request, nomeCorso):
+    """
+    Funzione che si occupa del rendering della view relativi ai vari corsi, una volta cliccato su una tipologia di corso
+    :param request:
+    :param nomeCorso:
+    :return:
+    """
     listaCorsi = ['box','aerobica','mma','yoga','crossfit','pilates']
     course_set_tmp = Corso.objects.filter(data__gte=datetime.datetime.today(), nome__exact=nomeCorso).order_by('data', 'ora_inizio')
     course_set = []
@@ -38,6 +44,12 @@ def courseDetail(request, nomeCorso):
 
 @login_required
 def prenotazione(request, corsoID):
+    """
+    funzione che si occupa della gestione delle prenotazioni ad un corso di un utente
+    :param request:
+    :param corsoID:
+    :return:
+    """
     corso = Corso.objects.get(id=corsoID)
     user = request.user
     CourseName = corso.nome
@@ -101,6 +113,12 @@ def listaAttesa(request, corsoID, nomeCorso):
 
 @login_required
 def cancellaPrenotazione(request, corsoID):
+    """
+    funzione che si occupa di gestire la cancellazione di una prenotazione di un utente ad un corso
+    :param request:
+    :param corsoID:
+    :return:
+    """
     corso = Corso.objects.get(pk=corsoID)
     CourseName = corso.nome
     prenotazione = Prenota.objects.get(user=request.user, corso=corso)
@@ -116,6 +134,12 @@ def cancellaPrenotazione(request, corsoID):
 
 @login_required
 def insert(request, nomeCorso):
+    """
+    funzione che si occupa della gestione dell'inserimento di un nuovo corso da parte di un operatore
+    :param request:
+    :param nomeCorso:
+    :return:
+    """
     form = CourseInsertForm(request.POST)
     if request.method == 'POST':
         if form.is_valid():

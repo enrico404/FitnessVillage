@@ -4,6 +4,9 @@ from main_page.models import Sala
 import datetime
 
 class CourseInsertForm(forms.Form):
+    """
+    form relativo all'inserimento di un nuovo corso
+    """
     date = forms.DateField(initial=timezone.now())
     capienza = forms.IntegerField(initial=0, min_value=0)
     ora_inizio = forms.TimeField(initial=datetime.datetime.today())

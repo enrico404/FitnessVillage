@@ -8,7 +8,7 @@ import datetime
 from .forms import ContactForm
 
 class MainPage_view_Tests(TestCase):
-    """ test suite per la view main_page """
+    """ test case per la view main_page """
     def setUp(self):
         self.client = Client()
         testUser, created1 = User.objects.get_or_create(username='testUser')
@@ -35,27 +35,33 @@ class MainPage_view_Tests(TestCase):
         self.reponseUrl = reverse('main_page:rispondi', args=[self.msg.id])
 
     def test_welcome_page(self):
+        #test per vericare caricamento del corretto template per la home page
         response = self.client.get(self.welcomeUrl)
         self.assertTemplateUsed(response, 'main_page/main_page.html')
         self.assertEqual(response.status_code, 200)
 
     def test_contact_page(self):
+        # test per vericare caricamento del corretto template per la pagina di assistenza
         response = self.client.get(self.contactUrl)
         self.assertTemplateUsed(response, 'main_page/contact.html')
         self.assertEqual(response.status_code, 200)
 
     def test_messaggi_page(self):
+        # test per vericare caricamento del corretto template per il centro messaggi
         response = self.client.get(self.messaggiUrl)
         self.assertTemplateUsed(response, 'main_page/messaggi.html')
         self.assertEqual(response.status_code, 200)
 
     def test_response_page(self):
+        # test per vericare caricamento del corretto template per la risposta ad un messaggio
         response = self.client.get(self.reponseUrl)
         self.assertTemplateUsed(response, 'main_page/response.html')
         self.assertEqual(response.status_code, 200)
 
 class MessageTests(TestCase):
-
+    """
+    test case per la funzione di messaggistica
+    """
     def setUp(self):
         self.client = Client()
         self.testUser, created1 = User.objects.get_or_create(username='testUser')
@@ -77,6 +83,7 @@ class MessageTests(TestCase):
         self.msgUrl = reverse('main_page:rispondi', args=[msg.id])
 
     def test_invio_messaggio(self):
+        # test del corretto invio di messaggi
         form = ContactForm({'date': datetime.datetime.today(),'messaggio':'prova'})
         response = self.client.post(self.msgUrl, data=form.data)
         messages = list(get_messages(response.wsgi_request))
@@ -86,7 +93,7 @@ class MessageTests(TestCase):
 
 class CorsoMethodTests(TestCase):
     """
-    suite di test per l'entità corso del modello, va a testare i suoi metodi
+    tests case per l'entità corso del modello, va a testare i suoi metodi
     """
 
     def setUp(self):
@@ -101,6 +108,7 @@ class CorsoMethodTests(TestCase):
         self.sala = Sala(id=1, cap_max=10)
 
     def test_scaduto_with_current_time(self):
+        # verifica della scadenza del corso per la data attuale
         ora_inizio = datetime.datetime.now()
         ora_fine = datetime.datetime.now()
         data = datetime.date.today()
@@ -108,6 +116,7 @@ class CorsoMethodTests(TestCase):
         self.assertTrue(corso.scaduto())
 
     def test_scaduto_with_ora_inizio_mag_current_time(self):
+        # verifica scadenza del corso nel caso la data di inizio sia maggiore del current time
         ora_inizio = datetime.datetime.now() + datetime.timedelta(hours=1)
         ora_fine = datetime.datetime.now() + datetime.timedelta(hours=2)
         data = datetime.date.today()
@@ -116,6 +125,7 @@ class CorsoMethodTests(TestCase):
         self.assertFalse(corso.scaduto())
 
     def test_scaduto_with_ora_fine_min_current_time(self):
+        # verifica scadenza nel caso l'ora di fine sia minore del current time
         ora_inizio = datetime.datetime.now() - datetime.timedelta(hours=3)
         ora_fine = datetime.datetime.now() - datetime.timedelta(hours=2)
         data =  datetime.date.today()
@@ -124,6 +134,7 @@ class CorsoMethodTests(TestCase):
         self.assertTrue(corso.scaduto())
 
     def test_scaduto_with_old_data(self):
+        # verifica di scadenza nel caso la data del corso sia già passata
         ora_inizio = datetime.datetime.now()
         ora_fine = datetime.datetime.now()
         data = datetime.date.today() - datetime.timedelta(days=2)

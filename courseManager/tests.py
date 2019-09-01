@@ -9,7 +9,9 @@ from django.contrib.auth.models import Group, User
 from main_page.models import Corso, ListaAttesa, Inserito
 
 class CourseTests(TestCase):
-
+    """
+    test case relativi alla gestione dei corsi
+    """
     def setUp(self):
         self.client = Client()
         testUser, created1 = User.objects.get_or_create(username='testUser')
@@ -24,6 +26,7 @@ class CourseTests(TestCase):
         self.loadUrl2 = reverse('courseManager:courseDetail', args=['box'])
 
     def test_insertCourse_with_blank_data(self):
+        # test per verificare il comportamente all'inserimento di un corso vuoto
         response = self.client.get(self.insertUrl)
         sala = Sala.objects.create(cap_max=10)
         form_data = {
@@ -38,6 +41,7 @@ class CourseTests(TestCase):
         self.assertFalse(test_form.is_valid())
 
     def test_insertCourse_with_negative_data(self):
+        # test per verificare il comportamento all'inserimento di un corso con valori negativi
         response = self.client.get(self.insertUrl)
         sala = Sala.objects.create(cap_max=10)
         form_data = {
@@ -52,16 +56,21 @@ class CourseTests(TestCase):
         self.assertFalse(test_form.is_valid())
 
     def test_non_existing_course(self):
+        # test per verificare il comportamento al caricamento di un corso non presente nella palestra
         response = self.client.get(self.loadUrl)
         self.assertEqual(response.status_code, 404)
 
     def test_existing_course(self):
+        # test di verifica del comportamento al click di un corso esistente
         response = self.client.get(self.loadUrl2)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'courseManager/detail.html')
 
 
 class PrenotazioneTests(TestCase):
+    """
+    Test case relativi alla funzione di prenotazione dei corsi
+    """
     def setUp(self):
         self.client = Client()
         testUser, created1 = User.objects.get_or_create(username='testUser')
@@ -96,6 +105,7 @@ class PrenotazioneTests(TestCase):
         self.prenUrl = reverse('courseManager:prenotazione', args=[self.corso.id])
 
     def test_prenotazione_operatore(self):
+        # test per vericare comportamento alla prenotazione di un operatore ad un corso, mon deve essere possibile
         self.client.login(username='operator', password='operator123')
         response = self.client.get(self.prenUrl)
 
@@ -106,6 +116,7 @@ class PrenotazioneTests(TestCase):
         self.client.logout()
 
     def test_prenotazione_user(self):
+        # test per verificare compportamento prenotazione di un utente ad un corso
         self.client.login(username='testUser', password='testUser123')
         response = self.client.get(self.prenUrl)
 
@@ -115,6 +126,7 @@ class PrenotazioneTests(TestCase):
         self.client.logout()
 
     def test_lista_attesa_operatore(self):
+        # test per verificare comportamento all'inserimento in lista di attesa di un operatore
         self.client.login(username='operator', password='operator123')
         response = self.client.get(self.listaAttesaUrl)
         messages = list(get_messages(response.wsgi_request))
@@ -123,6 +135,7 @@ class PrenotazioneTests(TestCase):
         self.client.logout()
 
     def test_lista_attesa_user(self):
+        # test per verificare comportamento all'inserimento in lista di attesa di un utente
         self.client.login(username='testUser', password='testUser123')
         response = self.client.get(self.listaAttesaUrl)
         messages = list(get_messages(response.wsgi_request))
@@ -134,7 +147,7 @@ class PrenotazioneTests(TestCase):
         self.assertTrue(inserimento)
 
     def test_insLista_due_volte(self):
-        #first insert
+        # test per verificare comportamento se un utwente prova ad inserirsi due volte nella stessa lista di attesa
         self.client.login(username='testUser', password='testUser123')
         response = self.client.get(self.listaAttesaUrl)
         messages = list(get_messages(response.wsgi_request))
