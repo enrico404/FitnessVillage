@@ -165,6 +165,10 @@ def insert(request, nomeCorso):
                     msg = 'La sala è già occupata da un altro corso dalle '+ str(corso.ora_inizio) + ' alle '+ str(corso.ora_fine)
                     messages.add_message(request, messages.ERROR, msg)
                     return HttpResponseRedirect('/courseManager/' + nomeCorso+ '/insertCourse')
+            if newCourse.ora_inizio >= newCourse.ora_fine:
+                messages.add_message(request, messages.ERROR, "L'ora di inizio non può essere maggiore di quella di fine!")
+                return HttpResponseRedirect('/courseManager/' + nomeCorso)
+
             if sala.cap_max >= newCourse.cap:
                 newCourse.save()
                 messages.add_message(request, messages.SUCCESS, 'Corso inserito con successo!')
