@@ -13,7 +13,7 @@ project created for the exam of "user intefaces" at UNIMORE
 	- python3 manage.py migrate
 	- python3 manage.py createsuperuser 
 	
-NB: the second command create a new super user for administration purpose
+NB: the second command will create a new super user for administration purpose
 
 # Run 
  - open a terminal inside the project root directory
