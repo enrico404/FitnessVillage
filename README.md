@@ -24,12 +24,18 @@ NB: the second command will create a new super user for administration purpose
  - inside your main browser digit the following url:
 	- 127.0.0.1:8000/ 
  
- # Testing
+# Testing
  python3 manage.py test <app_name>
  
  if you have problem on creation of the testing database, you have to run the following commands: 
  - open a mysql terminal:
     - use dbFitnessVillage;
     - grant all on test_dbFitnessVillage.* to 'userFitnessVillage'@'localhost';
+
+ Default users:
+	- user: operator1 , psw: operator123
+	- user: noreply , psw: noreply123
+
+you can add more operator using the administration pannel and more common users using the  register functionality
 
  
