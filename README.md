@@ -27,7 +27,7 @@ NB: the second command will create a new super user for administration purpose
 # Testing
  python3 manage.py test <app_name>
  
- if you have problem on creation of the testing database, you have to run the following commands: 
+ if you have problems on creation of the testing database, you have to run the following commands: 
  - open a mysql terminal:
     - use dbFitnessVillage;
     - grant all on test_dbFitnessVillage.* to 'userFitnessVillage'@'localhost';
@@ -36,6 +36,6 @@ NB: the second command will create a new super user for administration purpose
 	- user: operator1 , psw: operator123
 	- user: noreply , psw: noreply123
 
-you can add more operator using the administration pannel and more common users using the  register functionality
+you can add more operators using the administration panel (127.0.0.1:8000/admin) and add more common users using the  register functionality inside the site
 
  
