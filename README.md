@@ -6,7 +6,7 @@ project created for the exam of "user intefaces" at UNIMORE
  - python3
  - django2
 
-# Server installation step
+# Server installation steps
  - open a mysql terminal
  - copy and paste the commands from "dbscript" file
  - open a terminal and launch the following commands:
